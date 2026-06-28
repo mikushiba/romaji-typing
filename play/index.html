@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281221">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281227">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606281221';
+  var BUILD='202606281227';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -49,6 +49,7 @@
     <div class="kb" id="kb"></div>
     <div class="kb-toggle">
       <label><input type="checkbox" id="tgKb" checked> キーボードを みる</label>
+      <label><input type="checkbox" id="tgHands" checked> ゆびの おてほん</label>
       <label><input type="checkbox" id="tgRomaji" checked> ローマ字ヒントを みる</label>
     </div>
   </div>
@@ -74,8 +75,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606281221"></script>
-<script src="../shared/typing-core.js?v=202606281221"></script>
+<script src="../shared/lessons.js?v=202606281227"></script>
+<script src="../shared/typing-core.js?v=202606281227"></script>
 <script>
 (function(){
   "use strict";
@@ -123,6 +124,53 @@
     document.getElementById('kb').appendChild(rd);
   }
   buildKeyboard();
+
+  /* ---------- おてほん（両手の指）をキーボードに重ねる ---------- */
+  // f=指ID, home=ホームポジションのキー, cls=色クラス
+  var DOTS = [
+    {f:'lpinky',home:'a',cls:'lpinky'}, {f:'lring',home:'s',cls:'lring'},
+    {f:'lmid',home:'d',cls:'lmid'}, {f:'lindex',home:'f',cls:'lindex'},
+    {f:'lthumb',home:' ',cls:'thumb'}, {f:'rthumb',home:' ',cls:'thumb'},
+    {f:'rindex',home:'j',cls:'rindex'}, {f:'rmid',home:'k',cls:'rmid'},
+    {f:'rring',home:'l',cls:'rring'}, {f:'rpinky',home:';',cls:'rpinky'}
+  ];
+  var dotEls = {};
+  function buildHands(){
+    var kb=document.getElementById('kb');
+    var hands=document.createElement('div'); hands.id='hands'; hands.className='hands';
+    DOTS.forEach(function(d){
+      var el=document.createElement('div'); el.className='finger-dot';
+      var col=getComputedStyle(document.documentElement).getPropertyValue('--f-'+d.cls);
+      el.style.background=(col||'#ccc').trim();
+      hands.appendChild(el); dotEls[d.f]=el;
+    });
+    kb.appendChild(hands);
+  }
+  buildHands();
+  function centerOf(keyEl){
+    var kb=document.getElementById('kb');
+    var kr=kb.getBoundingClientRect(), r=keyEl.getBoundingClientRect();
+    return {x:r.left-kr.left+r.width/2, y:r.top-kr.top+r.height/2};
+  }
+  function updateHands(target){
+    var hands=document.getElementById('hands');
+    var show = document.getElementById('tgHands').checked && document.getElementById('tgKb').checked;
+    if(!show){ if(hands) hands.style.display='none'; return; }
+    hands.style.display='block';
+    var activeDot=null;
+    if(target && keyEls[target]){ var fin=keyEls[target].dataset.finger; activeDot=(fin==='thumb')?'rthumb':fin; }
+    DOTS.forEach(function(d){
+      var dot=dotEls[d.f]; if(!dot) return;
+      var isActive = (d.f===activeDot);
+      var keyEl = isActive ? keyEls[target] : keyEls[d.home];
+      if(!keyEl) keyEl=keyEls[d.home];
+      var c=centerOf(keyEl);
+      var dx = (!isActive && d.cls==='thumb') ? (d.f==='lthumb'?-28:28) : 0; // 親指2本がスペースで重ならないように
+      dot.style.left=(c.x+dx)+'px'; dot.style.top=c.y+'px';
+      dot.classList.toggle('active', isActive);
+    });
+  }
+  window.addEventListener('resize', function(){ if(round&&round[idx]!=null) render(); });
 
   /* ---------- 出題セット ---------- */
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
@@ -185,8 +233,9 @@
       rl.innerHTML = romajiHTML(ev);
     } else { rl.style.visibility='hidden'; }
 
-    // キーボードの的
+    // キーボードの的＋おてほん（指）
     highlightKeys(ev);
+    updateHands(primaryNext(ev));
   }
 
   // 元のかな文字列をトークン単位の表示に分割（tokenize 準拠でカタカナもそのまま見せる）
@@ -394,6 +443,7 @@
 
   document.getElementById('againBtn').onclick=function(){ location.reload(); };
   document.getElementById('tgKb').onchange=function(){ render(); };
+  document.getElementById('tgHands').onchange=function(){ render(); };
   document.getElementById('tgRomaji').onchange=function(){ render(); };
 
   // スタート

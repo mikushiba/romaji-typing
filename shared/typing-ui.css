@@ -104,7 +104,7 @@ a{color:inherit}
 .hint-banner.show{opacity:1}
 
 /* ====================== キーボード図 ====================== */
-.kb{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:6px;user-select:none}
+.kb{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:6px;user-select:none;position:relative}
 .kb-row{display:flex;gap:6px;justify-content:center}
 .key{
   width:42px;height:46px;border-radius:10px;border:1px solid rgba(0,0,0,.08);
@@ -131,6 +131,19 @@ a{color:inherit}
 @keyframes keyhit{0%{transform:scale(.86)}100%{transform:scale(1)}}
 /* ホームポジションの出っぱり（F/J） */
 .key.bump::after{content:"";position:absolute;bottom:6px;width:14px;height:3px;border-radius:2px;background:rgba(0,0,0,.28)}
+
+/* おてほん：両手の指をキーボードに重ねて表示。次に押す指がキーまで移動する */
+.hands{position:absolute;inset:0;pointer-events:none;z-index:5}
+.finger-dot{
+  position:absolute;width:30px;height:34px;border-radius:50% 50% 46% 46%;
+  transform:translate(-50%,-50%);opacity:.5;border:2px solid rgba(255,255,255,.85);
+  box-shadow:0 3px 6px rgba(0,0,0,.18);
+  transition:left .2s cubic-bezier(.34,1.4,.5,1), top .2s cubic-bezier(.34,1.4,.5,1),
+    width .15s, height .15s, opacity .15s;
+}
+.finger-dot.active{opacity:.95;width:40px;height:46px;box-shadow:0 8px 16px rgba(0,0,0,.32);
+  z-index:6;animation:fingerbob .7s ease-in-out infinite}
+@keyframes fingerbob{0%,100%{transform:translate(-50%,-58%)}50%{transform:translate(-50%,-50%)}}
 
 /* ゆびガイド（どの指で押すか） */
 .finger-guide{margin-top:8px;font-size:1rem;font-weight:800;color:var(--sub);min-height:1.4em}
