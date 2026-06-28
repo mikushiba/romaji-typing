@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281214">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281220">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606281214';
+  var BUILD='202606281220';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -75,8 +75,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606281214"></script>
-<script src="../shared/typing-core.js?v=202606281214"></script>
+<script src="../shared/lessons.js?v=202606281220"></script>
+<script src="../shared/typing-core.js?v=202606281220"></script>
 <script>
 (function(){
   "use strict";
@@ -127,8 +127,9 @@
 
   /* ---------- 出題セット ---------- */
   function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+  // ordered=true のレベルは じゅんばんどおり・全問。それ以外はシャッフルして一部出題。
   var ROUND_N = Math.min(level.items.length, (level.kind==='kana' && level.items[0].length>=12) ? 8 : 12);
-  var round = shuffle(level.items).slice(0, ROUND_N);
+  var round = level.ordered ? level.items.slice() : shuffle(level.items).slice(0, ROUND_N);
 
   /* ---------- 状態 ---------- */
   var idx=0, tokens=[], typed='', combo=0;
