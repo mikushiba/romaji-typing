@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281213">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281214">
 <script>
 (function(){
-  var BUILD='202606281213';
+  var BUILD='202606281214';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -59,11 +59,14 @@
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606281213"></script>
-<script src="shared/typing-core.js?v=202606281213"></script>
+<script src="shared/lessons.js?v=202606281214"></script>
+<script src="shared/typing-core.js?v=202606281214"></script>
 <script>
 (function(){
   var C = TypingCore;
+
+  /* テスト用：全レベル解放（鍵なし）。あとで鍵付きに戻すときは false にするだけ。 */
+  var UNLOCK_ALL = true;
 
   /* 称号 */
   var st = C.stage();
@@ -95,7 +98,7 @@
   /* ステージ一覧 */
   var html='';
   LESSONS.forEach(function(l, i){
-    var locked = l.unlock && !C.isCleared(l.unlock);
+    var locked = !UNLOCK_ALL && l.unlock && !C.isCleared(l.unlock);
     var cleared = C.isCleared(l.id);
     var best = (s.levelBest&&s.levelBest[l.id]) || null;
     var lvNum = 'Lv'+i;
