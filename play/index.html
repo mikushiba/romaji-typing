@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281416">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281419">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606281416';
+  var BUILD='202606281419';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -35,7 +35,7 @@
     <div class="play-head">
       <span class="chip">のこり <b id="remain">0</b></span>
       <span class="chip">れんぞく <b id="combo">0</b>🔥</span>
-      <span class="chip">KPM <b id="kpm">0</b></span>
+      <span class="chip">はやさ <b id="kpm">0</b></span>
       <div class="progress"><i id="prog" style="width:0%"></i></div>
     </div>
 
@@ -59,7 +59,7 @@
     <div style="font-size:2.6rem" id="resEmoji">🎉</div>
     <h2 id="resTitle">クリア！</h2>
     <div class="res-grid">
-      <div class="res-cell"><div class="n" id="rKpm">0</div><div class="l">KPM(はやさ)</div><div class="cmp" id="rKpmCmp"></div></div>
+      <div class="res-cell"><div class="n" id="rKpm">0</div><div class="l">はやさ</div><div class="cmp" id="rKpmCmp"></div></div>
       <div class="res-cell"><div class="n" id="rAcc">0%</div><div class="l">せいかくさ</div><div class="cmp" id="rAccCmp"></div></div>
       <div class="res-cell"><div class="n" id="rChars">0</div><div class="l">打ったかな</div></div>
     </div>
@@ -75,8 +75,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606281416"></script>
-<script src="../shared/typing-core.js?v=202606281416"></script>
+<script src="../shared/lessons.js?v=202606281419"></script>
+<script src="../shared/typing-core.js?v=202606281419"></script>
 <script>
 (function(){
   "use strict";
