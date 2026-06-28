@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ローマ字タイピング — れんしゅう</title>
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606280900">
+<script>
+/* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
+(function(){
+  var BUILD='202606280900';
+  try{
+    fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
+      t=(t||'').trim();
+      if(t && t>BUILD && !sessionStorage.getItem('rt_reload_'+t)){
+        sessionStorage.setItem('rt_reload_'+t,'1');
+        location.replace(location.pathname+location.search.replace(/[?&]_v=\d+/,'')+(location.search?'&':'?')+'_v='+t+location.hash);
+      }
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="crumb" href="../index.html">← トップ</a>
+    <div class="spacer"></div>
+    <h1 id="lvTitle">れんしゅう</h1>
+  </div>
+
+  <!-- プレイ画面 -->
+  <div id="playView">
+    <div class="play-head">
+      <span class="chip">のこり <b id="remain">0</b></span>
+      <span class="chip">れんぞく <b id="combo">0</b>🔥</span>
+      <span class="chip">KPM <b id="kpm">0</b></span>
+      <div class="progress"><i id="prog" style="width:0%"></i></div>
+    </div>
+
+    <div class="stage-board" id="board">
+      <div class="kana-line" id="kana">…</div>
+      <div class="romaji-line" id="romaji"></div>
+      <div class="hint-banner" id="hint"></div>
+    </div>
+
+    <div class="finger-guide" id="finger"></div>
+    <div class="kb" id="kb"></div>
+    <div class="kb-toggle">
+      <label><input type="checkbox" id="tgKb" checked> キーボードを みる</label>
+      <label><input type="checkbox" id="tgRomaji" checked> ローマ字ヒントを みる</label>
+      <span class="muted" style="font-size:.8rem">※パソコン・タブレット(キーボード)でね</span>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="resultView" class="card result" style="display:none">
+    <div style="font-size:2.6rem" id="resEmoji">🎉</div>
+    <h2 id="resTitle">クリア！</h2>
+    <div class="res-grid">
+      <div class="res-cell"><div class="n" id="rKpm">0</div><div class="l">KPM(はやさ)</div><div class="cmp" id="rKpmCmp"></div></div>
+      <div class="res-cell"><div class="n" id="rAcc">0%</div><div class="l">せいかくさ</div><div class="cmp" id="rAccCmp"></div></div>
+      <div class="res-cell"><div class="n" id="rChars">0</div><div class="l">打ったかな</div></div>
+    </div>
+    <div id="newMedals" style="margin:10px 0"></div>
+    <div id="weakBox" class="muted" style="font-size:.9rem;margin:8px 0"></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+      <button class="btn green" id="againBtn">もういちど</button>
+      <button class="btn" id="nextBtn" style="display:none">つぎのレベルへ ▶</button>
+      <a class="btn ghost" href="../index.html">トップへ</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../shared/lessons.js?v=202606280900"></script>
+<script src="../shared/typing-core.js?v=202606280900"></script>
+<script>
+(function(){
+  "use strict";
+  var R = Romaji, C = TypingCore;
+
+  /* ---------- レベル取得 ---------- */
+  function qs(k){ return new URLSearchParams(location.search).get(k); }
+  var lvId = qs('lv') || 'home';
+  var level = lessonById(lvId) || LESSONS[0];
+  document.getElementById('lvTitle').textContent = level.icon + ' ' + level.title;
+
+  /* ---------- キーボード定義（ゆび色つき） ---------- */
+  var FINGER_NAME = {
+    lpinky:'左こゆび', lring:'左くすりゆび', lmid:'左なかゆび', lindex:'左ひとさしゆび',
+    rindex:'右ひとさしゆび', rmid:'右なかゆび', rring:'右くすりゆび', rpinky:'右こゆび', thumb:'おやゆび'
+  };
+  var FINGER_VAR = {
+    lpinky:'--f-lpinky',lring:'--f-lring',lmid:'--f-lmid',lindex:'--f-lindex',
+    rindex:'--f-rindex',rmid:'--f-rmid',rring:'--f-rring',rpinky:'--f-rpinky',thumb:'--f-thumb'
+  };
+  var ROWS = [
+    'q:lpinky w:lring e:lmid r:lindex t:lindex y:rindex u:rindex i:rmid o:rring p:rpinky',
+    'a:lpinky s:lring d:lmid f:lindex g:lindex h:rindex j:rindex k:rmid l:rring ;:rpinky -:rpinky',
+    'z:lpinky x:lring c:lmid v:lindex b:lindex n:rindex m:rindex ,:rmid .:rring /:rpinky'
+  ];
+  var keyEls = {}; // char -> element
+  function buildKeyboard(){
+    var kb = document.getElementById('kb'); kb.innerHTML='';
+    ROWS.forEach(function(row){
+      var rd = document.createElement('div'); rd.className='kb-row';
+      row.split(' ').forEach(function(pair){
+        var p = pair.split(':'), ch=p[0], fin=p[1];
+        var el = document.createElement('div');
+        el.className='key '+fin+(ch==='f'||ch==='j'?' bump':'');
+        el.dataset.ch = ch; el.dataset.finger = fin;
+        el.textContent = ch.toUpperCase();
+        rd.appendChild(el); keyEls[ch]=el;
+      });
+      kb.appendChild(rd);
+    });
+    // スペース行
+    var rd=document.createElement('div'); rd.className='kb-row';
+    var sp=document.createElement('div'); sp.className='key space thumb'; sp.dataset.ch=' '; sp.dataset.finger='thumb';
+    sp.textContent='スペース'; rd.appendChild(sp); keyEls[' ']=sp;
+    document.getElementById('kb').appendChild(rd);
+  }
+  buildKeyboard();
+
+  /* ---------- 出題セット ---------- */
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+  var ROUND_N = Math.min(level.items.length, (level.kind==='kana' && level.items[0].length>=12) ? 8 : 12);
+  var round = shuffle(level.items).slice(0, ROUND_N);
+
+  /* ---------- 状態 ---------- */
+  var idx=0, tokens=[], typed='', combo=0;
+  var correctKeys=0, missKeys=0, totalKana=0, firstKeyTime=0, noMiss=true;
+  var recordedTokens=0; // この問題で図鑑記録済みのトークン数
+  var HINT_DELAY = 2500; // 何ミリ秒考えたらヒント
+  var hintTimer=null, hintShown=false;
+
+  /* ---------- 音 ---------- */
+  var actx=null;
+  function beep(freq,dur,type){
+    try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      var o=actx.createOscillator(), g=actx.createGain();
+      o.type=type||'sine'; o.frequency.value=freq; o.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(.12,actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+      o.start(); o.stop(actx.currentTime+dur);
+    }catch(e){}
+  }
+  var okOn=true;
+  function sOk(){ if(okOn) beep(880,.06,'triangle'); }
+  function sNg(){ beep(160,.14,'sawtooth'); }
+  function sClear(){ [523,659,784,1047].forEach(function(f,i){ setTimeout(function(){beep(f,.16,'triangle');}, i*110); }); }
+
+  /* ---------- 表示 ---------- */
+  function setItem(){
+    var item = round[idx];
+    tokens = R.tokenize(item);
+    typed=''; recordedTokens=0;
+    document.getElementById('remain').textContent = (round.length - idx);
+    document.getElementById('prog').style.width = (idx/round.length*100)+'%';
+    render();
+    armHint();
+  }
+
+  function render(){
+    var ev = R.evaluate(tokens, typed);
+    var done = ev.doneTokens||0;
+    // かな行
+    var kanaHTML='';
+    // トークン→元のかな対応：tokenize は正規化後。表示は元itemのかなをトークン単位で。
+    var disp = displayTokens(round[idx]);
+    for(var i=0;i<disp.length;i++){
+      var cls = i<done ? 'done' : (i===done ? 'cur' : 'todo');
+      kanaHTML += '<span class="k '+cls+'">'+escapeHtml(disp[i])+'</span>';
+    }
+    document.getElementById('kana').innerHTML = kanaHTML;
+
+    // ローマ字ヒント行
+    var showR = document.getElementById('tgRomaji').checked;
+    var rl = document.getElementById('romaji');
+    if(showR){
+      rl.style.visibility='visible';
+      rl.innerHTML = romajiHTML(ev);
+    } else { rl.style.visibility='hidden'; }
+
+    // キーボードの的
+    highlightKeys(ev);
+  }
+
+  // 元のかな文字列をトークン単位の表示に分割（tokenize 準拠でカタカナもそのまま見せる）
+  function displayTokens(raw){
+    var toks = R.tokenize(raw); // 正規化後トークン（文字数は原文と一致）
+    var out=[], j=0;
+    for(var i=0;i<toks.length;i++){ var len=toks[i].length; out.push(raw.substr(j,len)); j+=len; }
+    return out;
+  }
+
+  function romajiHTML(ev){
+    // done部分=typed(green)、現在トークンの途中、残りはおすすめ表記
+    var html='';
+    var typedPart = escapeHtml(typed);
+    html += '<span class="typed">'+typedPart+'</span>';
+    // 次に押す文字（強調）
+    var nx = primaryNext(ev);
+    if(nx){ html += '<span class="next">'+escapeHtml(nx)+'</span>'; }
+    // 残り（現在トークンの未入力 + 後続トークンのおすすめ）
+    var rest = restRomaji(ev);
+    if(rest){ html += '<span class="rest">'+escapeHtml(rest)+'</span>'; }
+    return html || '&nbsp;';
+  }
+
+  function primaryNext(ev){
+    if(ev.partialOpt) return ev.partialOpt[ev.partialK] || '';
+    var ti = ev.doneTokens||0;
+    if(ti>=tokens.length) return '';
+    var opt = R.optionsFor(tokens, ti)[0]||'';
+    return opt[0]||'';
+  }
+  function restRomaji(ev){
+    var s='';
+    var ti = ev.doneTokens||0;
+    if(ev.partialOpt){ s += ev.partialOpt.slice(ev.partialK+1); ti = ti+1; }
+    else { // 現在トークン未着手：先頭文字は primaryNext で出したので残りを足す
+      if(ti<tokens.length){ var o=R.optionsFor(tokens,ti)[0]||''; s += o.slice(1); ti=ti+1; }
+    }
+    for(var i=ti;i<tokens.length;i++){ s += (R.optionsFor(tokens,i)[0]||''); }
+    return s;
+  }
+
+  function highlightKeys(ev){
+    // すべての的をクリア
+    Object.keys(keyEls).forEach(function(k){ keyEls[k].classList.remove('target','hint'); });
+    if(!document.getElementById('tgKb').checked){ document.getElementById('kb').style.display='none'; return; }
+    document.getElementById('kb').style.display='flex';
+    var nexts = R.nextChars(tokens, typed); // 受けつける次の文字すべて
+    nexts.forEach(function(c){ if(keyEls[c]) keyEls[c].classList.add('target'); });
+    if(hintShown){
+      var p = primaryNext(ev);
+      if(keyEls[p]) keyEls[p].classList.add('hint');
+      showFinger(p);
+    } else {
+      document.getElementById('finger').textContent='';
+    }
+  }
+  function showFinger(ch){
+    var el = keyEls[ch]; var fg=document.getElementById('finger');
+    if(!el){ fg.textContent=''; return; }
+    var fin = el.dataset.finger;
+    var color = getComputedStyle(document.documentElement).getPropertyValue(FINGER_VAR[fin]);
+    fg.innerHTML = '<span class="fdot" style="background:'+color+'"></span>「'+(ch===' '?'スペース':ch.toUpperCase())+'」を '+FINGER_NAME[fin]+' で！';
+  }
+
+  /* ---------- ヒントのタイマー ---------- */
+  function armHint(){
+    clearTimeout(hintTimer); hintShown=false;
+    document.getElementById('hint').classList.remove('show');
+    hintTimer = setTimeout(function(){
+      hintShown=true;
+      var ev = R.evaluate(tokens, typed);
+      var p = primaryNext(ev);
+      var hb=document.getElementById('hint');
+      hb.textContent = 'ヒント：つぎは「'+(p===' '?'スペース':p.toUpperCase())+'」だよ';
+      hb.classList.add('show');
+      render(); // キーボードのパルス＆ゆびガイドON
+    }, HINT_DELAY);
+  }
+
+  /* ---------- 入力 ---------- */
+  function onKey(ch){
+    if(!firstKeyTime) firstKeyTime = Date.now();
+    var cand = typed + ch;
+    var ev = R.evaluate(tokens, cand);
+    if(ev.valid){
+      var before = R.evaluate(tokens, typed).doneTokens||0;
+      typed = cand;
+      correctKeys++; combo++;
+      C.recordKey(ch, true);
+      sOk();
+      flashKey(ch,'hit');
+      document.getElementById('combo').textContent = combo;
+      updateKpm();
+      // 新しく完成したかなトークンを図鑑へ
+      var after = ev.doneTokens||0;
+      for(var t=before; t<after; t++){ if(tokens[t]){ C.recordKana(tokens[t]); totalKana++; } }
+      armHint();
+      render();
+      if(ev.complete){ nextItem(); }
+    } else {
+      missKeys++; combo=0; noMiss=false;
+      document.getElementById('combo').textContent = 0;
+      // 押すべきだったキー（にがてキー記録）
+      var want = R.nextChars(tokens, typed);
+      if(want.length){ C.recordKey(want[0], false); }
+      sNg();
+      var bd=document.getElementById('board'); bd.classList.remove('shake'); void bd.offsetWidth; bd.classList.add('shake');
+    }
+  }
+  function nextItem(){
+    idx++;
+    document.getElementById('prog').style.width = (idx/round.length*100)+'%';
+    if(idx>=round.length){ finish(); return; }
+    setTimeout(setItem, 180);
+  }
+
+  function flashKey(ch,cls){ var el=keyEls[ch]; if(el){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); } }
+  function updateKpm(){
+    if(!firstKeyTime) return;
+    var min = (Date.now()-firstKeyTime)/60000;
+    var kpm = min>0 ? correctKeys/min : 0;
+    document.getElementById('kpm').textContent = Math.round(kpm);
+  }
+
+  function escapeHtml(s){ return (s||'').replace(/[&<>]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;'})[c];}); }
+
+  /* ---------- 物理キー ---------- */
+  document.addEventListener('keydown', function(e){
+    if(document.getElementById('resultView').style.display!=='none') return;
+    var k = e.key;
+    if(k && k.length===1){
+      var ch = k.toLowerCase();
+      if(/^[a-z0-9\-,.\/!? ]$/.test(ch)){
+        if(ch===' ') e.preventDefault();
+        onKey(ch);
+      }
+    }
+  });
+
+  /* ---------- 結果 ---------- */
+  function finish(){
+    clearTimeout(hintTimer);
+    var min = firstKeyTime ? (Date.now()-firstKeyTime)/60000 : 0;
+    var kpm = min>0 ? correctKeys/min : 0;
+    var acc = (correctKeys+missKeys)>0 ? correctKeys/(correctKeys+missKeys)*100 : 100;
+
+    // 記録
+    var prev = C.store().levelBest[level.id] || {kpm:0,acc:0};
+    C.bumpChars(totalKana); C.bumpKeys(correctKeys+missKeys);
+    C.noteCombo(maxComboSeen()); C.notePlay(); C.noteKpm(kpm);
+    C.noteLevel(level.id, kpm, acc);
+    if(noMiss && correctKeys>0){ C.notePerfect(); }
+    // クリア判定（このレベルの need 以上のかなを打てたら）
+    if(totalKana >= (level.need||1)) C.clearLevel(level.id);
+    var newM = C.checkMedals();
+    C.save();
+
+    // 表示
+    document.getElementById('playView').style.display='none';
+    var rv=document.getElementById('resultView'); rv.style.display='block';
+    document.getElementById('rKpm').textContent = Math.round(kpm);
+    document.getElementById('rAcc').textContent = Math.round(acc)+'%';
+    document.getElementById('rChars').textContent = totalKana;
+    cmp('rKpmCmp', Math.round(kpm)-prev.kpm, prev.kpm>0);
+    cmp('rAccCmp', Math.round(acc)-prev.acc, prev.acc>0);
+    document.getElementById('resTitle').textContent = noMiss ? 'ノーミスクリア！' : 'クリア！';
+    document.getElementById('resEmoji').textContent = acc>=95?'🏆':(acc>=80?'🎉':'💪');
+    sClear();
+
+    if(newM.length){
+      document.getElementById('newMedals').innerHTML = '<div style="font-weight:800;color:var(--gold)">🎖️ あたらしいメダル！</div>'+
+        newM.map(function(m){return '<span class="chip" style="margin:4px">'+m.emoji+' '+m.name+'</span>';}).join('');
+    }
+    // にがてキー
+    var weak = C.weakKeys(3);
+    if(weak.length){
+      document.getElementById('weakBox').innerHTML = 'にがてキー：'+weak.map(function(w){return '<b>'+w.key.toUpperCase()+'</b>';}).join('・')+' をれんしゅうしよう！';
+    }
+    // つぎのレベル
+    var order = LESSONS.map(function(l){return l.id;});
+    var ni = order.indexOf(level.id)+1;
+    if(ni<order.length){
+      var nb=document.getElementById('nextBtn'); nb.style.display='inline-flex';
+      nb.onclick=function(){ location.href='index.html?lv='+order[ni]; };
+    }
+  }
+  var _maxCombo=0;
+  function maxComboSeen(){ return _maxCombo; }
+  // combo の最大を追跡
+  (function(){
+    var origOnKey = onKey;
+    onKey = function(ch){ origOnKey(ch); if(combo>_maxCombo)_maxCombo=combo; };
+  })();
+
+  function cmp(id, diff, hasPrev){
+    var el=document.getElementById(id);
+    if(!hasPrev){ el.textContent='はじめての記ろく！'; el.className='cmp up'; return; }
+    if(diff>0){ el.textContent='ぜんかいより +'+diff; el.className='cmp up'; }
+    else if(diff<0){ el.textContent='ぜんかいより '+diff; el.className='cmp down'; }
+    else { el.textContent='ぜんかいと同じ'; el.className='cmp'; }
+  }
+
+  document.getElementById('againBtn').onclick=function(){ location.reload(); };
+  document.getElementById('tgKb').onchange=function(){ render(); };
+  document.getElementById('tgRomaji').onchange=function(){ render(); };
+
+  // スタート
+  document.getElementById('remain').textContent=round.length;
+  setItem();
+})();
+</script>
+</body>
+</html>

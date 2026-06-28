@@ -1,0 +1,172 @@
+/* =========================================================================
+   ローマ字タイピング — 共有デザイン（子ども向け・やさしいトーン）
+   ========================================================================= */
+:root{
+  --bg:#f3f8ff; --card:#ffffff; --ink:#243b53; --sub:#627d98;
+  --line:#dfe9f5; --accent:#3b82f6; --accent2:#22c55e;
+  --warn:#ef4444; --gold:#f59e0b; --soft:#eef5ff;
+  --shadow:0 6px 18px rgba(40,80,160,.10);
+  /* ゆびの色（ホームポジション） */
+  --f-lpinky:#f9a8d4; --f-lring:#fdba74; --f-lmid:#fde047; --f-lindex:#86efac;
+  --f-rindex:#7dd3fc; --f-rmid:#a5b4fc; --f-rring:#c4b5fd; --f-rpinky:#f0abfc;
+  --f-thumb:#e2e8f0;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN",
+    "Yu Gothic","Meiryo",system-ui,sans-serif;
+  background:linear-gradient(180deg,#eaf3ff,#f3f8ff 220px);
+  color:var(--ink); -webkit-text-size-adjust:100%;
+  padding:14px 14px 60px; line-height:1.5;
+}
+.wrap{max-width:920px;margin:0 auto}
+a{color:inherit}
+.btn{
+  display:inline-flex;align-items:center;gap:.4em;justify-content:center;
+  border:none;border-radius:16px;padding:.7em 1.2em;font-size:1.05rem;
+  font-weight:800;cursor:pointer;background:var(--accent);color:#fff;
+  box-shadow:var(--shadow);transition:transform .06s, filter .12s;
+  text-decoration:none;
+}
+.btn:active{transform:translateY(2px)}
+.btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--line)}
+.btn.green{background:var(--accent2)}
+.btn.gray{background:#eef2f7;color:var(--sub)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── ヘッダー ── */
+.top{display:flex;align-items:center;gap:10px;margin:4px 0 16px}
+.top h1{font-size:1.4rem;margin:0;font-weight:900;letter-spacing:.02em}
+.top .spacer{flex:1}
+.crumb{font-size:.85rem;color:var(--sub);text-decoration:none}
+
+/* ── カード ── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;
+  box-shadow:var(--shadow);padding:18px}
+.muted{color:var(--sub)}
+
+/* ── ステージ一覧（ポータル） ── */
+.stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.stage{display:block;text-decoration:none;color:inherit;position:relative;
+  background:#fff;border:2px solid var(--line);border-radius:20px;padding:16px 16px 14px;
+  box-shadow:var(--shadow);transition:transform .08s,border-color .12s}
+.stage:active{transform:translateY(2px)}
+.stage.locked{filter:grayscale(.7);opacity:.65}
+.stage .ic{font-size:2.1rem}
+.stage .ti{font-weight:900;font-size:1.15rem;margin-top:4px}
+.stage .de{font-size:.85rem;color:var(--sub);margin-top:4px;min-height:2.6em}
+.stage .lv{position:absolute;top:12px;right:14px;font-size:.78rem;color:var(--sub);
+  background:var(--soft);border-radius:999px;padding:.15em .7em;font-weight:800}
+.stage .done{position:absolute;top:10px;right:12px;font-size:1.2rem}
+.stage .lockmsg{font-size:.8rem;color:var(--warn);margin-top:6px;font-weight:800}
+
+/* ── 育成サマリー ── */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.sumcell{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.sumcell .n{font-size:1.5rem;font-weight:900}
+.sumcell .l{font-size:.78rem;color:var(--sub)}
+.badge-stage{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#fffbe6,#fff);
+  border:2px solid #ffe9a8;border-radius:18px;padding:12px 16px}
+.badge-stage .e{font-size:2.2rem}
+.badge-stage .nm{font-weight:900;font-size:1.1rem}
+.bar{height:10px;background:#eef2f7;border-radius:999px;overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+
+/* ====================== プレイ画面 ====================== */
+.play-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.3em .9em;
+  font-weight:800;font-size:.92rem;box-shadow:var(--shadow)}
+.chip b{color:var(--accent)}
+.progress{flex:1;min-width:120px;height:12px;background:#e7eef7;border-radius:999px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#3b82f6);transition:width .2s}
+
+.stage-board{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);
+  padding:26px 18px;text-align:center;margin-bottom:14px}
+.kana-line{font-size:2.6rem;font-weight:900;letter-spacing:.06em;line-height:1.35;
+  word-break:break-all}
+.kana-line .k{transition:color .1s}
+.kana-line .k.done{color:var(--accent2)}
+.kana-line .k.cur{color:var(--accent);background:#e9f2ff;border-radius:8px;padding:0 .06em}
+.kana-line .k.todo{color:var(--ink)}
+.romaji-line{margin-top:14px;font-size:1.5rem;font-weight:800;color:var(--sub);
+  letter-spacing:.08em;font-family:"SF Mono",Menlo,Consolas,monospace;min-height:1.4em}
+.romaji-line .typed{color:var(--accent2)}
+.romaji-line .next{color:var(--accent);background:#e9f2ff;border-radius:6px;padding:0 .12em}
+.romaji-line .rest{color:#b6c4d6}
+.shake{animation:shake .25s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.miss-flash{animation:missf .3s}
+@keyframes missf{0%{background:#ffe3e3}100%{background:#fff}}
+
+.hint-banner{margin-top:12px;font-size:1rem;font-weight:800;color:var(--gold);
+  min-height:1.4em;opacity:0;transition:opacity .3s}
+.hint-banner.show{opacity:1}
+
+/* ====================== キーボード図 ====================== */
+.kb{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:6px;user-select:none}
+.kb-row{display:flex;gap:6px;justify-content:center}
+.key{
+  width:42px;height:46px;border-radius:10px;border:1px solid rgba(0,0,0,.08);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;
+  background:#fff;color:#33475b;box-shadow:0 2px 0 rgba(0,0,0,.06);position:relative;
+  transition:transform .05s, box-shadow .1s, outline-color .1s;
+}
+.key.wide{width:74px}
+.key.space{width:280px}
+.key small{font-size:.72rem;color:#90a4b8;position:absolute;top:3px;left:5px}
+/* ゆびの色 */
+.key.lpinky{background:var(--f-lpinky)} .key.lring{background:var(--f-lring)}
+.key.lmid{background:var(--f-lmid)} .key.lindex{background:var(--f-lindex)}
+.key.rindex{background:var(--f-rindex)} .key.rmid{background:var(--f-rmid)}
+.key.rring{background:var(--f-rring)} .key.rpinky{background:var(--f-rpinky)}
+.key.thumb{background:var(--f-thumb)}
+/* つぎに押すキー */
+.key.target{outline:4px solid var(--accent);outline-offset:1px;z-index:2;transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(59,130,246,.4)}
+.key.hint{animation:keypulse .8s infinite}
+@keyframes keypulse{0%,100%{outline-color:var(--accent);transform:translateY(-2px) scale(1)}
+  50%{outline-color:var(--gold);transform:translateY(-2px) scale(1.12)}}
+.key.hit{animation:keyhit .18s}
+@keyframes keyhit{0%{transform:scale(.86)}100%{transform:scale(1)}}
+/* ホームポジションの出っぱり（F/J） */
+.key.bump::after{content:"";position:absolute;bottom:6px;width:14px;height:3px;border-radius:2px;background:rgba(0,0,0,.28)}
+
+/* ゆびガイド（どの指で押すか） */
+.finger-guide{margin-top:8px;font-size:1rem;font-weight:800;color:var(--sub);min-height:1.4em}
+.finger-guide .fdot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.1)}
+
+.kb-toggle{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px;flex-wrap:wrap}
+.kb-toggle label{font-size:.85rem;color:var(--sub);font-weight:800;display:flex;align-items:center;gap:4px}
+
+/* ====================== 結果画面 ====================== */
+.result{text-align:center}
+.result h2{font-size:1.6rem;margin:.2em 0}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.res-cell{background:var(--soft);border-radius:16px;padding:14px}
+.res-cell .n{font-size:1.8rem;font-weight:900;color:var(--accent)}
+.res-cell .l{font-size:.8rem;color:var(--sub)}
+.res-cell .cmp{font-size:.8rem;font-weight:800;margin-top:2px}
+.up{color:var(--accent2)} .down{color:var(--warn)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:#243b53;color:#fff;padding:.7em 1.2em;border-radius:14px;font-weight:800;
+  box-shadow:var(--shadow);opacity:0;transition:opacity .25s;z-index:50}
+.toast.show{opacity:1}
+
+/* 図鑑グリッド */
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin-top:10px}
+.dex .c{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;
+  font-weight:800;font-size:1.2rem;background:#eef2f7;color:#b6c4d6;border:1px solid var(--line)}
+.dex .c.got{background:#eafff1;color:var(--accent2);border-color:#bdf0cf}
+.dex .c.master{background:#fff7e0;color:var(--gold);border-color:#ffe9a8}
+.medals{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
+.medal{text-align:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 6px}
+.medal.off{filter:grayscale(1);opacity:.4}
+.medal .e{font-size:1.6rem}
+.medal .n{font-size:.72rem;color:var(--sub);margin-top:2px}
+
+@media(max-width:520px){
+  .kana-line{font-size:2rem} .romaji-line{font-size:1.2rem}
+  .key{width:30px;height:38px;font-size:.85rem} .key.wide{width:52px} .key.space{width:190px}
+  .res-cell .n{font-size:1.4rem}
+}
