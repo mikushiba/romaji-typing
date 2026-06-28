@@ -160,7 +160,7 @@
   }
 
   // 正しい入力 typed の「次に押せる文字」の集合（ヒント＆にがてキー記録用）
-  const ALPHA = 'abcdefghijklmnopqrstuvwxyz-,./!? ';
+  const ALPHA = 'abcdefghijklmnopqrstuvwxyz-,./!?; ';
   function nextChars(toks, typed) {
     const set = [];
     for (const c of ALPHA) {
