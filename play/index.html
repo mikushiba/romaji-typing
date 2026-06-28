@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281227">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281242">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606281227';
+  var BUILD='202606281242';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -75,8 +75,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606281227"></script>
-<script src="../shared/typing-core.js?v=202606281227"></script>
+<script src="../shared/lessons.js?v=202606281242"></script>
+<script src="../shared/typing-core.js?v=202606281242"></script>
 <script>
 (function(){
   "use strict";
@@ -126,22 +126,26 @@
   buildKeyboard();
 
   /* ---------- おてほん（両手の指）をキーボードに重ねる ---------- */
-  // f=指ID, home=ホームポジションのキー, cls=色クラス
+  // f=指ID, home=ホームポジションのキー, cls=色クラス, w/h=指先の太さ・長さ（指ごとにちがう）
   var DOTS = [
-    {f:'lpinky',home:'a',cls:'lpinky'}, {f:'lring',home:'s',cls:'lring'},
-    {f:'lmid',home:'d',cls:'lmid'}, {f:'lindex',home:'f',cls:'lindex'},
-    {f:'lthumb',home:' ',cls:'thumb'}, {f:'rthumb',home:' ',cls:'thumb'},
-    {f:'rindex',home:'j',cls:'rindex'}, {f:'rmid',home:'k',cls:'rmid'},
-    {f:'rring',home:'l',cls:'rring'}, {f:'rpinky',home:';',cls:'rpinky'}
+    {f:'lpinky',home:'a',cls:'lpinky', w:20,h:30}, {f:'lring',home:'s',cls:'lring', w:25,h:40},
+    {f:'lmid',home:'d',cls:'lmid', w:27,h:46}, {f:'lindex',home:'f',cls:'lindex', w:26,h:42},
+    {f:'lthumb',home:' ',cls:'thumb', w:34,h:28}, {f:'rthumb',home:' ',cls:'thumb', w:34,h:28},
+    {f:'rindex',home:'j',cls:'rindex', w:26,h:42}, {f:'rmid',home:'k',cls:'rmid', w:27,h:46},
+    {f:'rring',home:'l',cls:'rring', w:25,h:40}, {f:'rpinky',home:';',cls:'rpinky', w:20,h:30}
   ];
-  var dotEls = {};
+  var dotEls = {}, palmL=null, palmR=null;
   function buildHands(){
     var kb=document.getElementById('kb');
     var hands=document.createElement('div'); hands.id='hands'; hands.className='hands';
+    // 手のひらを先に（指の下に重なる）
+    palmL=document.createElement('div'); palmL.className='palm'; hands.appendChild(palmL);
+    palmR=document.createElement('div'); palmR.className='palm'; hands.appendChild(palmR);
     DOTS.forEach(function(d){
       var el=document.createElement('div'); el.className='finger-dot';
       var col=getComputedStyle(document.documentElement).getPropertyValue('--f-'+d.cls);
       el.style.background=(col||'#ccc').trim();
+      el.style.width=d.w+'px'; el.style.height=d.h+'px';
       hands.appendChild(el); dotEls[d.f]=el;
     });
     kb.appendChild(hands);
@@ -152,11 +156,22 @@
     var kr=kb.getBoundingClientRect(), r=keyEl.getBoundingClientRect();
     return {x:r.left-kr.left+r.width/2, y:r.top-kr.top+r.height/2};
   }
+  function placePalm(el, keys){
+    var cs=keys.map(function(k){ return centerOf(keyEls[k]); });
+    var xs=cs.map(function(c){return c.x;});
+    var minx=Math.min.apply(null,xs), maxx=Math.max.apply(null,xs);
+    el.style.left=((minx+maxx)/2)+'px';
+    el.style.top=(cs[0].y+34)+'px';
+    el.style.width=(maxx-minx+46)+'px';
+    el.style.height='42px';
+  }
   function updateHands(target){
     var hands=document.getElementById('hands');
     var show = document.getElementById('tgHands').checked && document.getElementById('tgKb').checked;
     if(!show){ if(hands) hands.style.display='none'; return; }
     hands.style.display='block';
+    placePalm(palmL, ['a','s','d','f']);
+    placePalm(palmR, ['j','k','l',';']);
     var activeDot=null;
     if(target && keyEls[target]){ var fin=keyEls[target].dataset.finger; activeDot=(fin==='thumb')?'rthumb':fin; }
     DOTS.forEach(function(d){
@@ -165,7 +180,9 @@
       var keyEl = isActive ? keyEls[target] : keyEls[d.home];
       if(!keyEl) keyEl=keyEls[d.home];
       var c=centerOf(keyEl);
-      var dx = (!isActive && d.cls==='thumb') ? (d.f==='lthumb'?-28:28) : 0; // 親指2本がスペースで重ならないように
+      var dx = (!isActive && d.cls==='thumb') ? (d.f==='lthumb'?-30:30) : 0; // 親指2本がスペースで重ならないように
+      var sc = isActive ? 1.3 : 1;
+      dot.style.width=(d.w*sc)+'px'; dot.style.height=(d.h*sc)+'px';
       dot.style.left=(c.x+dx)+'px'; dot.style.top=c.y+'px';
       dot.classList.toggle('active', isActive);
     });

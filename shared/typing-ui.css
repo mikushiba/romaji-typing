@@ -134,14 +134,26 @@ a{color:inherit}
 
 /* おてほん：両手の指をキーボードに重ねて表示。次に押す指がキーまで移動する */
 .hands{position:absolute;inset:0;pointer-events:none;z-index:5}
+/* 手のひら（指の下に置いて「手」に見せる） */
+.palm{position:absolute;transform:translate(-50%,-50%);opacity:.5;
+  background:rgba(255,221,191,.85);border:2px solid rgba(255,255,255,.7);
+  border-radius:42% 42% 48% 48% / 38% 38% 62% 62%;
+  box-shadow:0 4px 10px rgba(0,0,0,.14);
+  transition:left .2s, top .2s, width .2s}
+/* 指先（サイズは指ごとに変える＝buildHandsでインライン指定） */
 .finger-dot{
-  position:absolute;width:30px;height:34px;border-radius:50% 50% 46% 46%;
-  transform:translate(-50%,-50%);opacity:.5;border:2px solid rgba(255,255,255,.85);
+  position:absolute;transform:translate(-50%,-50%);opacity:.62;
+  border:2px solid rgba(255,255,255,.85);
+  border-radius:46% 46% 42% 42% / 60% 60% 40% 40%;
   box-shadow:0 3px 6px rgba(0,0,0,.18);
   transition:left .2s cubic-bezier(.34,1.4,.5,1), top .2s cubic-bezier(.34,1.4,.5,1),
     width .15s, height .15s, opacity .15s;
 }
-.finger-dot.active{opacity:.95;width:40px;height:46px;box-shadow:0 8px 16px rgba(0,0,0,.32);
+.finger-dot::before{ /* つめ */
+  content:"";position:absolute;left:50%;top:16%;transform:translateX(-50%);
+  width:54%;height:30%;border-radius:50%;background:rgba(255,255,255,.55);
+}
+.finger-dot.active{opacity:.97;box-shadow:0 8px 16px rgba(0,0,0,.32);
   z-index:6;animation:fingerbob .7s ease-in-out infinite}
 @keyframes fingerbob{0%,100%{transform:translate(-50%,-58%)}50%{transform:translate(-50%,-50%)}}
 
