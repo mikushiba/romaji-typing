@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281419">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606281424">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606281419';
+  var BUILD='202606281424';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -34,7 +34,7 @@
   <div id="playView">
     <div class="play-head">
       <span class="chip">のこり <b id="remain">0</b></span>
-      <span class="chip">れんぞく <b id="combo">0</b>🔥</span>
+      <span class="chip">れんぞく <b id="combo">0</b></span>
       <span class="chip">はやさ <b id="kpm">0</b></span>
       <div class="progress"><i id="prog" style="width:0%"></i></div>
     </div>
@@ -56,8 +56,7 @@
 
   <!-- 結果画面 -->
   <div id="resultView" class="card result" style="display:none">
-    <div style="font-size:2.6rem" id="resEmoji">🎉</div>
-    <h2 id="resTitle">クリア！</h2>
+    <h2 id="resTitle" style="margin-top:.4em">クリア！</h2>
     <div class="res-grid">
       <div class="res-cell"><div class="n" id="rKpm">0</div><div class="l">はやさ</div><div class="cmp" id="rKpmCmp"></div></div>
       <div class="res-cell"><div class="n" id="rAcc">0%</div><div class="l">せいかくさ</div><div class="cmp" id="rAccCmp"></div></div>
@@ -75,8 +74,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606281419"></script>
-<script src="../shared/typing-core.js?v=202606281419"></script>
+<script src="../shared/lessons.js?v=202606281424"></script>
+<script src="../shared/typing-core.js?v=202606281424"></script>
 <script>
 (function(){
   "use strict";
@@ -86,7 +85,7 @@
   function qs(k){ return new URLSearchParams(location.search).get(k); }
   var lvId = qs('lv') || 'home';
   var level = lessonById(lvId) || LESSONS[0];
-  document.getElementById('lvTitle').textContent = level.icon + ' ' + level.title;
+  document.getElementById('lvTitle').textContent = level.title;
 
   /* ---------- キーボード定義（ゆび色つき） ---------- */
   var FINGER_NAME = {
@@ -423,12 +422,11 @@
     cmp('rKpmCmp', Math.round(kpm)-prev.kpm, prev.kpm>0);
     cmp('rAccCmp', Math.round(acc)-prev.acc, prev.acc>0);
     document.getElementById('resTitle').textContent = noMiss ? 'ノーミスクリア！' : 'クリア！';
-    document.getElementById('resEmoji').textContent = acc>=95?'🏆':(acc>=80?'🎉':'💪');
     sClear();
 
     if(newM.length){
-      document.getElementById('newMedals').innerHTML = '<div style="font-weight:800;color:var(--gold)">🎖️ あたらしいメダル！</div>'+
-        newM.map(function(m){return '<span class="chip" style="margin:4px">'+m.emoji+' '+m.name+'</span>';}).join('');
+      document.getElementById('newMedals').innerHTML = '<div style="font-weight:800;color:var(--gold)">あたらしいメダル！</div>'+
+        newM.map(function(m){return '<span class="chip" style="margin:4px">'+m.name+'</span>';}).join('');
     }
     // にがてキー
     var weak = C.weakKeys(3);
