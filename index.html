@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281409">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281415">
 <script>
 (function(){
-  var BUILD='202606281409';
+  var BUILD='202606281415';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -62,13 +62,13 @@
 <div class="modal-bg" id="medalModal">
   <div class="modal">
     <button class="modal-close" id="medalClose" aria-label="とじる">×</button>
-    <h3>メダル <span class="muted" id="medalCnt" style="font-size:.85rem"></span></h3>
+    <h3>メダル</h3>
     <div class="medals" id="medals"></div>
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606281409"></script>
-<script src="shared/typing-core.js?v=202606281409"></script>
+<script src="shared/lessons.js?v=202606281415"></script>
+<script src="shared/typing-core.js?v=202606281415"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -99,7 +99,6 @@
     {n:(s.bestKpm||0), l:'さいこうの はやさ'},
     {n:(s.bestCombo||0), l:'れんぞく'},
     {n:C.dexCount()+'/'+C.dexTotal, l:'かな図鑑'},
-    {n:C.medalCount()+'/'+C.MEDALS.length, l:'メダル'},
     {n:s.plays||0, l:'あそんだ回数'},
   ];
   document.getElementById('summary').innerHTML = cells.map(function(c,i){
@@ -147,7 +146,6 @@
     var on = !!got[m.id];
     return '<div class="medal'+(on?'':' off')+'"><div class="e">'+m.emoji+'</div><div class="n">'+m.name+'</div></div>';
   }).join('');
-  document.getElementById('medalCnt').textContent = '('+C.medalCount()+'/'+C.MEDALS.length+')';
 
   /* モーダルの開閉 */
   function openModal(id){ document.getElementById(id).classList.add('show'); }
