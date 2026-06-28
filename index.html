@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281358">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281401">
 <script>
 (function(){
-  var BUILD='202606281358';
+  var BUILD='202606281401';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -41,17 +41,34 @@
   <h2 style="margin:22px 0 12px;font-size:1.15rem">レベルをえらぼう</h2>
   <div class="stages" id="stages"></div>
 
-  <!-- 図鑑 -->
-  <h2 style="margin:26px 0 8px;font-size:1.15rem">かな図鑑</h2>
-  <div class="card"><div class="dex" id="dex"></div></div>
-
-  <!-- メダル -->
-  <h2 style="margin:26px 0 8px;font-size:1.15rem">メダル <span class="muted" id="medalCnt" style="font-size:.9rem"></span></h2>
-  <div class="card"><div class="medals" id="medals"></div></div>
+  <!-- かな図鑑・メダルはボタンで開く -->
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 8px">
+    <button class="btn green" id="openDex">かな図鑑をみる</button>
+    <button class="btn" id="openMedals">メダルをみる</button>
+  </div>
 </div>
 
-<script src="shared/lessons.js?v=202606281358"></script>
-<script src="shared/typing-core.js?v=202606281358"></script>
+<!-- モーダル：かな図鑑 -->
+<div class="modal-bg" id="dexModal">
+  <div class="modal">
+    <button class="modal-close" id="dexClose" aria-label="とじる">×</button>
+    <h3>かな図鑑 <span class="muted" id="dexCnt" style="font-size:.85rem"></span></h3>
+    <p class="muted" style="margin:0 0 10px;font-size:.85rem">打てたかなが いろづくよ。5かいで ★マスター。</p>
+    <div class="dex" id="dex"></div>
+  </div>
+</div>
+
+<!-- モーダル：メダル -->
+<div class="modal-bg" id="medalModal">
+  <div class="modal">
+    <button class="modal-close" id="medalClose" aria-label="とじる">×</button>
+    <h3>メダル <span class="muted" id="medalCnt" style="font-size:.85rem"></span></h3>
+    <div class="medals" id="medals"></div>
+  </div>
+</div>
+
+<script src="shared/lessons.js?v=202606281401"></script>
+<script src="shared/typing-core.js?v=202606281401"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -119,6 +136,7 @@
     return '<div class="c '+cls+'">'+k+'</div>';
   }).join('');
   document.getElementById('dex').innerHTML = dexHtml;
+  document.getElementById('dexCnt').textContent = '('+C.dexCount()+'/'+C.dexTotal+'・★'+C.dexMaster()+')';
 
   /* メダル */
   var got = s.medals||{};
@@ -127,6 +145,19 @@
     return '<div class="medal'+(on?'':' off')+'"><div class="e">'+m.emoji+'</div><div class="n">'+m.name+'</div></div>';
   }).join('');
   document.getElementById('medalCnt').textContent = '('+C.medalCount()+'/'+C.MEDALS.length+')';
+
+  /* モーダルの開閉 */
+  function openModal(id){ document.getElementById(id).classList.add('show'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+  document.getElementById('openDex').onclick = function(){ openModal('dexModal'); };
+  document.getElementById('openMedals').onclick = function(){ openModal('medalModal'); };
+  document.getElementById('dexClose').onclick = function(){ closeModal('dexModal'); };
+  document.getElementById('medalClose').onclick = function(){ closeModal('medalModal'); };
+  // 背景クリックでとじる
+  ['dexModal','medalModal'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
+  });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal('dexModal'); closeModal('medalModal'); } });
 })();
 </script>
 </body>

@@ -190,6 +190,17 @@ a{color:inherit}
 .medal .e{font-size:1.6rem}
 .medal .n{font-size:.72rem;color:var(--sub);margin-top:2px}
 
+/* モーダル（かな図鑑・メダルはボタンで開く） */
+.modal-bg{position:fixed;inset:0;background:rgba(20,40,80,.45);display:none;
+  align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:22px;max-width:700px;width:100%;max-height:86vh;
+  overflow:auto;padding:20px 20px 24px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal h3{margin:2px 0 12px;font-size:1.2rem}
+.modal-close{float:right;border:none;background:#eef2f7;color:#627d98;width:36px;height:36px;
+  border-radius:50%;font-size:1.3rem;font-weight:900;cursor:pointer;line-height:1}
+.modal-close:active{transform:translateY(1px)}
+
 @media(max-width:520px){
   .kana-line{font-size:2rem} .romaji-line{font-size:1.2rem}
   .key{width:30px;height:38px;font-size:.85rem} .key.wide{width:52px} .key.space{width:190px}
