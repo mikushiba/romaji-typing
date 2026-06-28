@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281323">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281358">
 <script>
 (function(){
-  var BUILD='202606281323';
+  var BUILD='202606281358';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -50,8 +50,8 @@
   <div class="card"><div class="medals" id="medals"></div></div>
 </div>
 
-<script src="shared/lessons.js?v=202606281323"></script>
-<script src="shared/typing-core.js?v=202606281323"></script>
+<script src="shared/lessons.js?v=202606281358"></script>
+<script src="shared/typing-core.js?v=202606281358"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -71,6 +71,10 @@
     document.getElementById('stageNext').textContent = 'さいこうランク！';
   }
 
+  /* カラーパレット（算数・漢字アプリのようにカラフルに） */
+  var CARD_BG  = ['#ffe1e6','#ffeacf','#fff6c2','#d9f5d6','#d2edfb','#dee2ff','#ece0ff','#ffe0f0'];
+  var ACCENT   = ['#ef6d83','#f59331','#dca900','#3fbf6f','#3b9ae0','#5b73e8','#8b5cf6','#e25aa6'];
+
   /* サマリー */
   var s = C.store();
   var cells = [
@@ -81,8 +85,9 @@
     {n:C.medalCount()+'/'+C.MEDALS.length, l:'メダル'},
     {n:s.plays||0, l:'あそんだ回数'},
   ];
-  document.getElementById('summary').innerHTML = cells.map(function(c){
-    return '<div class="sumcell"><div class="n">'+c.n+'</div><div class="l">'+c.l+'</div></div>';
+  document.getElementById('summary').innerHTML = cells.map(function(c,i){
+    return '<div class="sumcell" style="background:'+CARD_BG[i]+';border-color:'+ACCENT[i]+'55">'+
+      '<div class="n" style="color:'+ACCENT[i]+'">'+c.n+'</div><div class="l">'+c.l+'</div></div>';
   }).join('');
 
   /* ステージ一覧 */
@@ -97,9 +102,11 @@
         '<div class="ti">'+l.title+'</div><div class="de">'+l.desc+'</div>'+
         '<div class="lockmsg">「'+(need?need.title:'')+'」をクリアでひらく</div></div>';
     } else {
-      html += '<a class="stage" href="play/index.html?lv='+l.id+'"><span class="lv">'+lvNum+'</span>'+
-        (cleared?'<span class="done" style="left:12px;right:auto;font-size:.8rem;color:var(--accent2);font-weight:800">クリア</span>':'')+
-        '<div class="ti">'+l.title+'</div>'+
+      var bg=CARD_BG[i%CARD_BG.length], ac=ACCENT[i%ACCENT.length];
+      html += '<a class="stage" href="play/index.html?lv='+l.id+'" style="background:'+bg+';border-color:'+ac+'">'+
+        '<span class="lv" style="background:'+ac+';color:#fff">'+lvNum+'</span>'+
+        (cleared?'<span class="done" style="left:12px;right:auto;font-size:.8rem;color:#1f9d57;font-weight:800">クリア</span>':'')+
+        '<div class="ti" style="color:'+ac+'">'+l.title+'</div>'+
         '<div class="de">'+l.desc+'</div></a>';
     }
   });

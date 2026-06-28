@@ -11,7 +11,7 @@
   const LEVELS = [
     {
       id: 'home', icon: '⌨️', title: 'ホームポジション', kind: 'keys',
-      desc: 'ゆびを「ホーム」におこう。左は a s d f、右は j k l ;。',
+      desc: 'ゆびのホームをおぼえよう',
       need: 8,
       items: [
         'fff', 'jjj', 'fjfj', 'jfjf', 'ddd', 'kkk', 'dkdk', 'sss', 'lll',
@@ -19,8 +19,8 @@
       ],
     },
     {
-      id: 'aiueo1', icon: '🅰️', title: 'あいうえお（1もじ）', kind: 'kana',
-      desc: 'あ→ん まで、1もじずつ じゅんばんに打とう。',
+      id: 'aiueo1', icon: '🅰️', title: 'あいうえお 1もじ', kind: 'kana',
+      desc: 'あ から ん まで 1もじずつ',
       need: 15, unlock: 'home', ordered: true,
       items: [
         'あ', 'い', 'う', 'え', 'お',
@@ -36,8 +36,8 @@
       ],
     },
     {
-      id: 'aiueo5', icon: '🔤', title: 'あいうえお（ブロック）', kind: 'kana',
-      desc: 'あいうえお → かきくけこ … と、5もじずつ じゅんばんに。',
+      id: 'aiueo5', icon: '🔤', title: 'あいうえお ブロック', kind: 'kana',
+      desc: 'あいうえお・かきくけこ を 5もじずつ',
       need: 20, unlock: 'aiueo1', ordered: true,
       items: [
         'あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの',
@@ -46,7 +46,7 @@
     },
     {
       id: 'words', icon: '🐱', title: 'かんたんなことば', kind: 'kana',
-      desc: 'みじかいことばを打とう。マイクラのアイテムだよ。',
+      desc: 'マイクラの みじかい ことば',
       need: 12, unlock: 'aiueo5',
       items: [
         'つち', 'いし', 'き', 'みず', 'すな', 'たね', 'にく', 'こむぎ',
@@ -56,7 +56,7 @@
     },
     {
       id: 'special', icon: '✨', title: 'とくべつルール', kind: 'kana',
-      desc: '「っ」は子音をかさねる、「ん」は nn、「ー」は -、「ゃゅょ」もね。',
+      desc: 'っ・ん・ー・ゃゅょ にチャレンジ',
       need: 12, unlock: 'words',
       items: [
         'マグマ', 'ゾンビ', 'ピストン', 'スケルトン', 'ダイヤモンド',
@@ -66,7 +66,7 @@
     },
     {
       id: 'phrase', icon: '💬', title: 'マイクラフレーズ', kind: 'kana',
-      desc: 'ことばのかたまりを打とう。スペースもね。',
+      desc: 'マイクラの みじかい フレーズ',
       need: 10, unlock: 'special',
       items: [
         'ブロックをおく', 'つるはしでほる', 'たいまつをおく', 'むらをみつけた',
@@ -76,7 +76,7 @@
     },
     {
       id: 'sentence', icon: '📝', title: 'みじかい文', kind: 'kana',
-      desc: 'みじかい文を打ってみよう。リズムよく！',
+      desc: 'マイクラの みじかい 文',
       need: 8, unlock: 'phrase',
       items: [
         'よるになるとモンスターがでてくる',
@@ -91,7 +91,7 @@
     },
     {
       id: 'text', icon: '📖', title: '文章', kind: 'kana',
-      desc: '「、」「。」のある文章。これができたらタイピングマスター！',
+      desc: '、。のある ながい 文章',
       need: 6, unlock: 'sentence',
       items: [
         'あさになったら、どうぐをつくって、たんけんにでかけよう。',
