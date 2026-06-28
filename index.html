@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281407">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281409">
 <script>
 (function(){
-  var BUILD='202606281407';
+  var BUILD='202606281409';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -38,7 +38,7 @@
 
   <div class="summary" id="summary"></div>
 
-  <h2 style="margin:22px 0 12px;font-size:1.15rem">むずかしさを えらぼう</h2>
+  <h2 style="margin:22px 0 12px;font-size:1.15rem">ゲームを えらぼう</h2>
   <div class="stages" id="stages"></div>
 
   <!-- かな図鑑・メダルはボタンで開く -->
@@ -67,8 +67,8 @@
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606281407"></script>
-<script src="shared/typing-core.js?v=202606281407"></script>
+<script src="shared/lessons.js?v=202606281409"></script>
+<script src="shared/typing-core.js?v=202606281409"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -125,8 +125,7 @@
     } else {
       var bg=CARD_BG[i%CARD_BG.length], ac=ACCENT[i%ACCENT.length];
       html += '<a class="stage" href="play/index.html?lv='+l.id+'" style="background:'+bg+';border-color:'+ac+'">'+
-        '<div style="'+lvrow+'"><span class="lv" style="position:static;background:'+tierColor+';color:#fff">'+tier+'</span>'+
-        (cleared?'<span style="font-size:.8rem;color:#1f9d57;font-weight:800">クリア</span>':'')+'</div>'+
+        '<div style="'+lvrow+'"><span class="lv" style="position:static;background:'+tierColor+';color:#fff">'+tier+'</span></div>'+
         '<div class="ti" style="color:'+ac+'">'+l.title+'</div>'+
         '<div class="de">'+l.desc+'</div></a>';
     }
