@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
 <link rel="stylesheet" href="../shared/typing-ui.css?v=202606280900">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
@@ -268,6 +269,8 @@
 
   /* ---------- 入力 ---------- */
   function onKey(ch){
+    // 問題の切りかえ中（次の問題がまだ出ていない）はスルー
+    if(R.evaluate(tokens, typed).complete) return;
     if(!firstKeyTime) firstKeyTime = Date.now();
     var cand = typed + ch;
     var ev = R.evaluate(tokens, cand);
