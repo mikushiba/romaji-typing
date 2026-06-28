@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606281252">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606281323">
 <script>
 (function(){
-  var BUILD='202606281252';
+  var BUILD='202606281323';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -24,14 +24,11 @@
 <body>
 <div class="wrap">
   <div class="top">
-    <h1>⌨️ ローマ字タイピング</h1>
-    <div class="spacer"></div>
-    <a class="crumb" href="#dexSec">📚 ずかん</a>
+    <h1>ローマ字タイピング</h1>
   </div>
 
   <!-- 称号バッジ -->
   <div class="badge-stage" id="stageBadge">
-    <div class="e">🥚</div>
     <div style="flex:1">
       <div class="nm" id="stageName">タイピング 10きゅう</div>
       <div class="bar"><i id="stageBar" style="width:0%"></i></div>
@@ -41,26 +38,20 @@
 
   <div class="summary" id="summary"></div>
 
-  <h2 style="margin:22px 0 8px;font-size:1.15rem">レベルをえらぼう</h2>
-  <p class="muted" style="margin:0 0 12px;font-size:.9rem">うえからじゅんばんに。やさしい→だんだん文章へ。クリアするとつぎがひらくよ。</p>
+  <h2 style="margin:22px 0 12px;font-size:1.15rem">レベルをえらぼう</h2>
   <div class="stages" id="stages"></div>
 
   <!-- 図鑑 -->
-  <h2 id="dexSec" style="margin:26px 0 6px;font-size:1.15rem">📚 かな図鑑 <span class="muted" id="dexCnt" style="font-size:.9rem"></span></h2>
-  <p class="muted" style="margin:0 0 8px;font-size:.85rem">打てたかなが いろづくよ。5かいで ★マスター(きいろ)！</p>
+  <h2 style="margin:26px 0 8px;font-size:1.15rem">かな図鑑</h2>
   <div class="card"><div class="dex" id="dex"></div></div>
 
   <!-- メダル -->
-  <h2 style="margin:26px 0 6px;font-size:1.15rem">🏅 メダル <span class="muted" id="medalCnt" style="font-size:.9rem"></span></h2>
+  <h2 style="margin:26px 0 8px;font-size:1.15rem">メダル <span class="muted" id="medalCnt" style="font-size:.9rem"></span></h2>
   <div class="card"><div class="medals" id="medals"></div></div>
-
-  <div style="text-align:center;margin:28px 0">
-    <button class="btn gray" id="resetBtn" style="font-size:.85rem">きろくをリセット</button>
-  </div>
 </div>
 
-<script src="shared/lessons.js?v=202606281252"></script>
-<script src="shared/typing-core.js?v=202606281252"></script>
+<script src="shared/lessons.js?v=202606281323"></script>
+<script src="shared/typing-core.js?v=202606281323"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -70,7 +61,6 @@
 
   /* 称号 */
   var st = C.stage();
-  document.querySelector('#stageBadge .e').textContent = st.cur.emoji;
   document.getElementById('stageName').textContent = st.cur.name;
   if(st.next){
     var span = st.next.at - st.cur.at, got = st.value - st.cur.at;
@@ -84,9 +74,9 @@
   /* サマリー */
   var s = C.store();
   var cells = [
-    {n:s.totalChars||0, l:'打ったかな(ごうけい)'},
-    {n:(s.bestKpm||0), l:'さいこうKPM'},
-    {n:(s.bestCombo||0)+'🔥', l:'さいこうれんぞく'},
+    {n:s.totalChars||0, l:'打ったかな'},
+    {n:(s.bestKpm||0), l:'さいこうの はやさ'},
+    {n:(s.bestCombo||0), l:'れんぞく'},
     {n:C.dexCount()+'/'+C.dexTotal, l:'かな図鑑'},
     {n:C.medalCount()+'/'+C.MEDALS.length, l:'メダル'},
     {n:s.plays||0, l:'あそんだ回数'},
@@ -100,20 +90,17 @@
   LESSONS.forEach(function(l, i){
     var locked = !UNLOCK_ALL && l.unlock && !C.isCleared(l.unlock);
     var cleared = C.isCleared(l.id);
-    var best = (s.levelBest&&s.levelBest[l.id]) || null;
     var lvNum = 'Lv'+i;
     if(locked){
       var need = lessonById(l.unlock);
-      html += '<div class="stage locked"><span class="lv">'+lvNum+'</span><div class="ic">🔒</div>'+
-        '<div class="ti">'+l.icon+' '+l.title+'</div><div class="de">'+l.desc+'</div>'+
+      html += '<div class="stage locked"><span class="lv">'+lvNum+'</span>'+
+        '<div class="ti">'+l.title+'</div><div class="de">'+l.desc+'</div>'+
         '<div class="lockmsg">「'+(need?need.title:'')+'」をクリアでひらく</div></div>';
     } else {
-      var bestTxt = best ? ('さいこう KPM'+best.kpm+'・せいかく'+best.acc+'%') : 'まだ記ろくなし';
       html += '<a class="stage" href="play/index.html?lv='+l.id+'"><span class="lv">'+lvNum+'</span>'+
-        (cleared?'<span class="done">✅</span>':'')+
-        '<div class="ic">'+l.icon+'</div><div class="ti">'+l.title+'</div>'+
-        '<div class="de">'+l.desc+'</div>'+
-        '<div class="muted" style="font-size:.78rem;margin-top:4px">'+bestTxt+'</div></a>';
+        (cleared?'<span class="done" style="left:12px;right:auto;font-size:.8rem;color:var(--accent2);font-weight:800">クリア</span>':'')+
+        '<div class="ti">'+l.title+'</div>'+
+        '<div class="de">'+l.desc+'</div></a>';
     }
   });
   document.getElementById('stages').innerHTML = html;
@@ -125,7 +112,6 @@
     return '<div class="c '+cls+'">'+k+'</div>';
   }).join('');
   document.getElementById('dex').innerHTML = dexHtml;
-  document.getElementById('dexCnt').textContent = '('+C.dexCount()+'/'+C.dexTotal+'・★'+C.dexMaster()+')';
 
   /* メダル */
   var got = s.medals||{};
@@ -134,11 +120,6 @@
     return '<div class="medal'+(on?'':' off')+'"><div class="e">'+m.emoji+'</div><div class="n">'+m.name+'</div></div>';
   }).join('');
   document.getElementById('medalCnt').textContent = '('+C.medalCount()+'/'+C.MEDALS.length+')';
-
-  /* リセット */
-  document.getElementById('resetBtn').onclick=function(){
-    if(confirm('ぜんぶの記ろくを けしますか？(もとにもどせません)')){ C.resetAll(); location.reload(); }
-  };
 })();
 </script>
 </body>
