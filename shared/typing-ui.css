@@ -33,6 +33,15 @@ a{color:inherit}
 .btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--line)}
 .btn.green{background:var(--accent2)}
 .btn.gray{background:#eef2f7;color:var(--sub)}
+
+/* きろくの ほぞん／よみこみ */
+.saveBar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.saveBar button,.saveBar .impBtn{
+  display:inline-flex;align-items:center;gap:.3em;
+  border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:99px;
+  padding:7px 14px;font-size:.82rem;font-weight:700;cursor:pointer}
+.saveBar button:active,.saveBar .impBtn:active{transform:translateY(1px)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
 /* ── ヘッダー ── */

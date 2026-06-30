@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606302023">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606302026">
 <script>
 (function(){
-  var BUILD='202606302023';
+  var BUILD='202606302026';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -46,6 +46,13 @@
     <button class="btn green" id="openDex">かな図鑑をみる</button>
     <button class="btn" id="openMedals">メダルをみる</button>
   </div>
+
+  <!-- きろくの ほぞん／よみこみ -->
+  <div class="saveBar">
+    <button id="exportSave" type="button">💾 きろくを ほぞん</button>
+    <label class="impBtn" for="importFile">📂 きろくを よみこむ</label>
+    <input id="importFile" type="file" accept="application/json,.json" hidden>
+  </div>
 </div>
 
 <!-- モーダル：かな図鑑 -->
@@ -67,8 +74,8 @@
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606302023"></script>
-<script src="shared/typing-core.js?v=202606302023"></script>
+<script src="shared/lessons.js?v=202606302026"></script>
+<script src="shared/typing-core.js?v=202606302026"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -158,6 +165,10 @@
     document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
   });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal('dexModal'); closeModal('medalModal'); } });
+
+  /* きろくの ほぞん／よみこみ */
+  document.getElementById('exportSave').onclick = function(){ C.exportSave('ローマ字タイピング-きろく.json'); };
+  document.getElementById('importFile').onchange = function(e){ var f=e.target.files[0]; if(f) C.importSave(f); e.target.value=''; };
 })();
 </script>
 </body>

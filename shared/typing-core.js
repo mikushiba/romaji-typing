@@ -304,6 +304,29 @@
 
   function resetAll() { store = {}; localStorage.removeItem(STORE_KEY); load(); }
 
+  /* ── セーブ／読み込み（store 全体＝進捗をまとめて入出力） ── */
+  function exportSave(filename) {
+    const blob = new Blob([JSON.stringify(store)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename || 'ローマ字タイピング-きろく.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+  function importSave(file, onOk) {
+    const r = new FileReader();
+    r.onload = function () {
+      try {
+        const obj = JSON.parse(r.result);
+        if (!obj || typeof obj !== 'object' || !obj.kana) throw 0;
+        if (!confirm('いまの きろくを、よみこんだ きろくに 入れかえます。よろしいですか？')) return;
+        localStorage.setItem(STORE_KEY, JSON.stringify(obj));
+        if (onOk) onOk(); else location.reload();
+      } catch (e) { alert('この ファイルは よみこめませんでした。'); }
+    };
+    r.readAsText(file);
+  }
+
   const TypingCore = {
     Romaji: Romaji,
     store: function () { return store; },
@@ -315,6 +338,7 @@
     DEX: DEX, dexCount: dexCount, dexMaster: dexMaster, dexTotal: dexTotal, kanaCount: function (k) { return store.kana[toHira(k)] || 0; },
     STAGES: STAGES, stage: stage,
     MEDALS: MEDALS, checkMedals: checkMedals, medalCount: medalCount,
+    exportSave: exportSave, importSave: importSave,
   };
 
   global.Romaji = Romaji;
