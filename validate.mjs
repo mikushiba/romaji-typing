@@ -14,6 +14,7 @@ const LESSONS = win.LESSONS;
 
 let errors = 0, count = 0;
 for (const lv of LESSONS) {
+  if (lv.kind === 'free' || !lv.items) continue;                  // 自由うちこみは検証対象外
   if (lv.kind === 'keys') { count += lv.items.length; continue; } // 英字直打ちは検証対象外
   for (const item of lv.items) {
     count++;

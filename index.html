@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606302033">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606302051">
 <script>
 (function(){
-  var BUILD='202606302033';
+  var BUILD='202606302051';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -92,8 +92,8 @@
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606302033"></script>
-<script src="shared/typing-core.js?v=202606302033"></script>
+<script src="shared/lessons.js?v=202606302051"></script>
+<script src="shared/typing-core.js?v=202606302051"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -133,12 +133,20 @@
   /* ステージ一覧 */
   var html='';
   LESSONS.forEach(function(l, i){
+    var lvrow = 'display:flex;align-items:center;gap:8px;margin-bottom:6px';
+    // 自由うちこみ：お手本なしの特別カード（いつでも遊べる・専用ページへ）
+    if(l.kind==='free'){
+      html += '<a class="stage" href="'+l.href+'" style="background:#efe6ff;border-color:#8b5cf6">'+
+        '<div style="'+lvrow+'"><span class="lv" style="position:static;background:#8b5cf6;color:#fff">じゆう</span></div>'+
+        '<div class="ti" style="color:#7c3aed">'+l.title+'</div>'+
+        '<div class="de">'+l.desc+'</div></a>';
+      return;
+    }
     var locked = !UNLOCK_ALL && l.unlock && !C.isCleared(l.unlock);
     var cleared = C.isCleared(l.id);
     // むずかしさ（やさしい/ふつう/むずかしい）と 信号色
     var tier = i<=2 ? 'やさしい' : (i<=5 ? 'ふつう' : 'むずかしい');
     var tierColor = i<=2 ? '#3fbf6f' : (i<=5 ? '#f59331' : '#ef5350');
-    var lvrow = 'display:flex;align-items:center;gap:8px;margin-bottom:6px';
     if(locked){
       var need = lessonById(l.unlock);
       html += '<div class="stage locked">'+

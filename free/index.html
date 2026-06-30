@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ローマ字タイピング — じゆうにうつ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606302051">
+<script>
+/* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
+(function(){
+  var BUILD='202606302051';
+  try{
+    fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
+      t=(t||'').trim();
+      if(t && t>BUILD && !sessionStorage.getItem('rt_reload_'+t)){
+        sessionStorage.setItem('rt_reload_'+t,'1');
+        location.replace(location.pathname+location.search.replace(/[?&]_v=\d+/,'')+(location.search?'&':'?')+'_v='+t+location.hash);
+      }
+    }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="crumb" href="../index.html">← トップ</a>
+    <div class="spacer"></div>
+    <h1>じゆうにうつ</h1>
+  </div>
+
+  <!-- お題（白紙がこわくないように、ゆるい題を出す） -->
+  <div class="free-prompt">
+    <span class="muted">お題：</span><b id="prompt">…</b>
+    <button class="btn ghost free-nextodai" id="nextOdai" type="button">べつの お題</button>
+  </div>
+
+  <!-- うちこみ表示：ローマ字で打つと ひらがなに変わって出てくる -->
+  <div class="stage-board free-board">
+    <div class="free-out" id="out"><span class="free-ph">ここに ひらがなが でるよ</span><span class="free-caret"></span></div>
+    <div class="free-raw" id="rawline"></div>
+  </div>
+
+  <div class="free-help muted">ローマ字で うつと、ひらがなに かわるよ。けすときは Backspace（けすキー）。</div>
+
+  <div class="free-actions">
+    <button class="btn gray" id="clearBtn" type="button">ぜんぶ けす</button>
+    <button class="btn green" id="doneBtn" type="button">できた！</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../shared/lessons.js?v=202606302051"></script>
+<script src="../shared/typing-core.js?v=202606302051"></script>
+<script>
+(function(){
+  "use strict";
+  var R = Romaji, C = TypingCore;
+
+  /* ---------- お題 ---------- */
+  var L = (typeof lessonById==='function' && lessonById('free')) || {};
+  var PROMPTS = (L.prompts && L.prompts.length) ? L.prompts : ['すきな ことば'];
+  var pIdx = Math.floor(Math.random()*PROMPTS.length);
+  function showPrompt(){ document.getElementById('prompt').textContent = PROMPTS[pIdx]; }
+  showPrompt();
+  document.getElementById('nextOdai').onclick = function(){
+    pIdx = (pIdx + 1) % PROMPTS.length; showPrompt();
+  };
+
+  /* ---------- うちこみ ---------- */
+  var raw = '';                          // 打ったローマ字（生）
+  var outEl = document.getElementById('out');
+  var rawEl = document.getElementById('rawline');
+
+  function render(){
+    var kana = R.toKana(raw);
+    if(kana){
+      outEl.innerHTML = '';
+      outEl.appendChild(document.createTextNode(kana));
+      var car = document.createElement('span'); car.className='free-caret'; outEl.appendChild(car);
+    } else {
+      outEl.innerHTML = '<span class="free-ph">ここに ひらがなが でるよ</span><span class="free-caret"></span>';
+    }
+    rawEl.textContent = raw ? ('うった：' + raw) : '';
+  }
+  render();
+
+  // 受けつける1文字（ローマ字・数字・記号）
+  var OK = /^[a-z0-9\-,.\/!?;]$/;
+  document.addEventListener('keydown', function(e){
+    if(e.metaKey || e.ctrlKey || e.altKey) return;     // ショートカットは無視
+    var k = e.key;
+    if(k === 'Backspace'){ raw = raw.slice(0,-1); e.preventDefault(); render(); return; }
+    if(k === 'Enter'){ raw += '\n'; e.preventDefault(); render(); return; }
+    if(k === ' ' || k === 'Spacebar'){ raw += ' '; e.preventDefault(); render(); return; }
+    if(k && k.length === 1){
+      var ch = k.toLowerCase();
+      if(OK.test(ch)){ raw += ch; e.preventDefault(); render(); }
+    }
+  });
+
+  /* ---------- ボタン ---------- */
+  function toast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ t.style.opacity = '0'; }, 1800);
+  }
+
+  document.getElementById('clearBtn').onclick = function(){ raw = ''; render(); };
+
+  document.getElementById('doneBtn').onclick = function(){
+    var kana = R.toKana(raw);
+    // 確定したかな（末尾の未確定ローマ字・空白・記号はのぞく）
+    var done = kana.replace(/[a-z0-9\s]/g, '');
+    var n = 0;
+    for(var i=0;i<done.length;i++){
+      var ch = done[i];
+      if(/[ぁ-ゖァ-ヶ]/.test(ch)){ C.recordKana(ch); n++; }   // かな図鑑にも反映
+    }
+    if(n === 0){ toast('なにか うってみてね'); return; }
+    C.bumpChars(n);                 // 称号（打ったかな累計）に反映
+    C.bumpKeys(raw.length);
+    C.notePlay();
+    C.checkMedals();
+    C.save();
+    toast('できたね！ ' + n + 'もじ かけたよ ✨');
+    raw = ''; render();
+    pIdx = (pIdx + 1) % PROMPTS.length; showPrompt();   // つぎのお題へ
+  };
+})();
+</script>
+</body>
+</html>

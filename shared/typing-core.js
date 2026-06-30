@@ -179,7 +179,49 @@
     return out;
   }
 
-  const Romaji = { tokenize: tokenize, evaluate: evaluate, nextChars: nextChars, canonical: canonical, toHira: toHira, optionsFor: optionsFor };
+  /* ── ローマ字 → かな（自由うちこみ用の簡易変換）──
+     ・最長一致でつづり→かなに変換。確定できない末尾のローマ字はそのまま残す（入力途中の表示用）。
+     ・「っ」＝同じ子音の連続、「ん」＝nn / n＋子音、で処理。
+     ・「し/ち/ふ」などは R の表記に従う（si/ti/hu などは確定しない＝厳格化と一致）。 */
+  const SPELL = (function () {
+    const m = {};
+    Object.keys(R).forEach(function (k) {
+      if (k === ' ' || k === '　') return;          // 空白は素通し
+      R[k].forEach(function (sp) {
+        if (sp === ' ' || sp in m) return;          // 先に出たかな（＝代表）を優先
+        m[sp] = k;
+      });
+    });
+    ['ltu', 'xtu', 'ltsu', 'xtsu'].forEach(function (sp) { m[sp] = 'っ'; }); // 小さい「っ」
+    return m;
+  })();
+  function isConsonant(c) { return c >= 'a' && c <= 'z' && !VOWELS.includes(c); }
+  function toKana(input) {
+    const s = String(input == null ? '' : input).toLowerCase();
+    let out = '', i = 0;
+    while (i < s.length) {
+      const c = s[i];
+      if (c === ' ' || c === '\n' || c === '\t') { out += c; i++; continue; } // 空白・改行はそのまま
+      // 「っ」：同じ子音の連続（kk → っk）。n は別扱い
+      if (c !== 'n' && isConsonant(c) && s[i + 1] === c) { out += 'っ'; i++; continue; }
+      // 「ん」：nn → ん、n＋子音(yを除く) → ん。n＋母音/y・末尾は下のマッチへ
+      if (c === 'n') {
+        const nx = s[i + 1];
+        if (nx === 'n') { out += 'ん'; i += 2; continue; }
+        if (nx !== undefined && isConsonant(nx) && nx !== 'y') { out += 'ん'; i++; continue; }
+      }
+      // 最長一致（4→1文字）
+      let matched = false;
+      for (let L = Math.min(4, s.length - i); L >= 1; L--) {
+        const sub = s.substr(i, L);
+        if (SPELL[sub]) { out += SPELL[sub]; i += L; matched = true; break; }
+      }
+      if (!matched) { out += c; i++; }              // 未確定のローマ字はそのまま表示
+    }
+    return out;
+  }
+
+  const Romaji = { tokenize: tokenize, evaluate: evaluate, nextChars: nextChars, canonical: canonical, toHira: toHira, optionsFor: optionsFor, toKana: toKana };
 
   /* ============================ 育成エンジン ============================ */
   const STORE_KEY = 'typingQuiz.v1';
