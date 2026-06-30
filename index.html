@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ローマ字タイピング</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="shared/typing-ui.css?v=202606302026">
+<link rel="stylesheet" href="shared/typing-ui.css?v=202606302033">
 <script>
 (function(){
-  var BUILD='202606302026';
+  var BUILD='202606302033';
   try{
     fetch('shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -41,10 +41,11 @@
   <h2 style="margin:22px 0 12px;font-size:1.15rem">ゲームを えらぼう</h2>
   <div class="stages" id="stages"></div>
 
-  <!-- かな図鑑・メダルはボタンで開く -->
+  <!-- かな図鑑・メダル・せっていはボタンで開く -->
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 8px">
     <button class="btn green" id="openDex">かな図鑑をみる</button>
     <button class="btn" id="openMedals">メダルをみる</button>
+    <button class="btn gray" id="openSettings">せってい</button>
   </div>
 
   <!-- きろくの ほぞん／よみこみ -->
@@ -74,8 +75,25 @@
   </div>
 </div>
 
-<script src="shared/lessons.js?v=202606302026"></script>
-<script src="shared/typing-core.js?v=202606302026"></script>
+<!-- モーダル：せってい（タイピング画面の表示きりかえ） -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" id="settingsClose" aria-label="とじる">×</button>
+    <h3>せってい</h3>
+    <p class="muted" style="margin:0 0 12px;font-size:.85rem">タイピングの がめんに 出すものを えらべるよ。</p>
+    <div class="settings">
+      <label class="setrow"><span>キーボードを みる</span>
+        <span class="switch"><input type="checkbox" id="setKb"><i></i></span></label>
+      <label class="setrow"><span>ゆびの おてほん</span>
+        <span class="switch"><input type="checkbox" id="setHands"><i></i></span></label>
+      <label class="setrow"><span>ローマ字ヒントを みる</span>
+        <span class="switch"><input type="checkbox" id="setRomaji"><i></i></span></label>
+    </div>
+  </div>
+</div>
+
+<script src="shared/lessons.js?v=202606302033"></script>
+<script src="shared/typing-core.js?v=202606302033"></script>
 <script>
 (function(){
   var C = TypingCore;
@@ -158,13 +176,22 @@
   function closeModal(id){ document.getElementById(id).classList.remove('show'); }
   document.getElementById('openDex').onclick = function(){ openModal('dexModal'); };
   document.getElementById('openMedals').onclick = function(){ openModal('medalModal'); };
+  document.getElementById('openSettings').onclick = function(){ openModal('settingsModal'); };
   document.getElementById('dexClose').onclick = function(){ closeModal('dexModal'); };
   document.getElementById('medalClose').onclick = function(){ closeModal('medalModal'); };
+  document.getElementById('settingsClose').onclick = function(){ closeModal('settingsModal'); };
   // 背景クリックでとじる
-  ['dexModal','medalModal'].forEach(function(id){
+  ['dexModal','medalModal','settingsModal'].forEach(function(id){
     document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
   });
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal('dexModal'); closeModal('medalModal'); } });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeModal('dexModal'); closeModal('medalModal'); closeModal('settingsModal'); } });
+
+  /* せってい（表示きりかえ）：保存値を反映し、変えたら保存 */
+  [['setKb','kb'],['setHands','hands'],['setRomaji','romaji']].forEach(function(p){
+    var el = document.getElementById(p[0]);
+    el.checked = C.getSetting(p[1]);
+    el.onchange = function(){ C.setSetting(p[1], el.checked); };
+  });
 
   /* きろくの ほぞん／よみこみ */
   document.getElementById('exportSave').onclick = function(){ C.exportSave('ローマ字タイピング-きろく.json'); };

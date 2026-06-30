@@ -42,6 +42,19 @@ a{color:inherit}
   border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:99px;
   padding:7px 14px;font-size:.82rem;font-weight:700;cursor:pointer}
 .saveBar button:active,.saveBar .impBtn:active{transform:translateY(1px)}
+
+/* せってい：トグルスイッチ */
+.settings{display:flex;flex-direction:column;gap:4px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 6px;border-bottom:1px solid var(--line);font-weight:700;color:var(--ink);cursor:pointer}
+.setrow:last-child{border-bottom:none}
+.switch{position:relative;display:inline-block;width:52px;height:30px;flex:none}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.switch i{position:absolute;inset:0;background:#cdd8e6;border-radius:999px;transition:background .15s}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;
+  background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+.switch input:checked + i{background:var(--accent2)}
+.switch input:checked + i::after{transform:translateX(22px)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
 /* ── ヘッダー ── */

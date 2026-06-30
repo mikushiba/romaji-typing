@@ -198,6 +198,7 @@
     store.dailyTotal = store.dailyTotal || 0;
     store.cleared = store.cleared || {};        // { レベルID: true } 解放用
     store.levelBest = store.levelBest || {};    // { レベルID: {kpm,acc} }
+    store.settings = store.settings || {};      // 表示設定（キーボード／おてほん／ローマ字ヒント）
     return store;
   }
   load();
@@ -304,6 +305,10 @@
 
   function resetAll() { store = {}; localStorage.removeItem(STORE_KEY); load(); }
 
+  /* ── 表示設定（キーボード／おてほん／ローマ字ヒント）。未設定は ON 既定 ── */
+  function getSetting(k) { return store.settings[k] !== false; }
+  function setSetting(k, v) { store.settings[k] = !!v; save(); }
+
   /* ── セーブ／読み込み（store 全体＝進捗をまとめて入出力） ── */
   function exportSave(filename) {
     const blob = new Blob([JSON.stringify(store)], { type: 'application/json' });
@@ -339,6 +344,7 @@
     STAGES: STAGES, stage: stage,
     MEDALS: MEDALS, checkMedals: checkMedals, medalCount: medalCount,
     exportSave: exportSave, importSave: importSave,
+    getSetting: getSetting, setSetting: setSetting,
   };
 
   global.Romaji = Romaji;

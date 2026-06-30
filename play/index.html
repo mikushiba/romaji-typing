@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — れんしゅう</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202606302026">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202606302033">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202606302026';
+  var BUILD='202606302033';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -47,11 +47,6 @@
 
     <div class="finger-guide" id="finger"></div>
     <div class="kb" id="kb"></div>
-    <div class="kb-toggle">
-      <label><input type="checkbox" id="tgKb" checked> キーボードを みる</label>
-      <label><input type="checkbox" id="tgHands" checked> ゆびの おてほん</label>
-      <label><input type="checkbox" id="tgRomaji" checked> ローマ字ヒントを みる</label>
-    </div>
   </div>
 
   <!-- 結果画面 -->
@@ -74,8 +69,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202606302026"></script>
-<script src="../shared/typing-core.js?v=202606302026"></script>
+<script src="../shared/lessons.js?v=202606302033"></script>
+<script src="../shared/typing-core.js?v=202606302033"></script>
 <script>
 (function(){
   "use strict";
@@ -167,7 +162,7 @@
   function updateHands(target){
     var hands=document.getElementById('hands');
     // ヒントが出ているときだけ おてほん（指）を表示する
-    var show = hintShown && document.getElementById('tgHands').checked && document.getElementById('tgKb').checked;
+    var show = hintShown && C.getSetting('hands') && C.getSetting('kb');
     if(!show){ if(hands) hands.style.display='none'; return; }
     hands.style.display='block';
     placePalm(palmL, ['a','s','d','f']);
@@ -243,7 +238,7 @@
     document.getElementById('kana').innerHTML = kanaHTML;
 
     // ローマ字ヒント行
-    var showR = document.getElementById('tgRomaji').checked;
+    var showR = C.getSetting('romaji');
     var rl = document.getElementById('romaji');
     if(showR){
       rl.style.visibility='visible';
@@ -298,7 +293,7 @@
   function highlightKeys(ev){
     // すべての的をクリア
     Object.keys(keyEls).forEach(function(k){ keyEls[k].classList.remove('target','hint'); });
-    if(!document.getElementById('tgKb').checked){ document.getElementById('kb').style.display='none'; return; }
+    if(!C.getSetting('kb')){ document.getElementById('kb').style.display='none'; return; }
     document.getElementById('kb').style.display='flex';
     var nexts = R.nextChars(tokens, typed); // 受けつける次の文字すべて
     nexts.forEach(function(c){ if(keyEls[c]) keyEls[c].classList.add('target'); });
@@ -458,10 +453,7 @@
   }
 
   document.getElementById('againBtn').onclick=function(){ location.reload(); };
-  document.getElementById('tgKb').onchange=function(){ render(); };
-  // おてほんをオンにし直したら、ヒント状態をリセット（また数秒待ってから出る）
-  document.getElementById('tgHands').onchange=function(){ if(this.checked) armHint(); render(); };
-  document.getElementById('tgRomaji').onchange=function(){ render(); };
+  // 表示設定（キーボード／おてほん／ローマ字ヒント）はトップ画面で切りかえる
 
   // スタート
   document.getElementById('remain').textContent=round.length;
