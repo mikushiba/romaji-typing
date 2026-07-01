@@ -45,7 +45,7 @@
       ],
     },
     {
-      id: 'dakuon', icon: '💦', title: 'だくおん・はんだくおん', kind: 'kana',
+      id: 'dakuon', icon: '💦', title: 'だくおん', kind: 'kana',
       desc: 'がぎぐげご ぱぴぷぺぽ を うとう',
       need: 20, unlock: 'aiueo5', ordered: true,
       items: [
@@ -54,7 +54,7 @@
       ],
     },
     {
-      id: 'youon', icon: '🌀', title: 'ようおん（ちいさい ゃゅょ）', kind: 'kana',
+      id: 'youon', icon: '🌀', title: 'ようおん', kind: 'kana',
       desc: 'きゃきゅきょ ぎゃぎゅぎょ を うとう',
       need: 20, unlock: 'dakuon', ordered: true,
       items: [
