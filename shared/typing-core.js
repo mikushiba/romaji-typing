@@ -291,7 +291,7 @@
   function clearLevel(id) { store.cleared[id] = true; }
   function isCleared(id) { return !!store.cleared[id]; }
 
-  /* 称号（タイピング級〜段）：打てたかな累計 totalChars で昇格 */
+  /* 称号（タイピング級〜段〜高位）：打てたかな累計 totalChars で昇格 */
   const STAGES = [
     { at: 0, name: 'タイピング 10きゅう', emoji: '🥚' },
     { at: 30, name: 'タイピング 9きゅう', emoji: '🐣' },
@@ -304,10 +304,29 @@
     { at: 1800, name: 'タイピング 2きゅう', emoji: '🌟' },
     { at: 2600, name: 'タイピング 1きゅう', emoji: '💎' },
     { at: 3600, name: 'タイピング 初だん', emoji: '🏅' },
-    { at: 5000, name: 'タイピング 2だん', emoji: '🥈' },
-    { at: 7000, name: 'タイピング 3だん', emoji: '🥇' },
-    { at: 10000, name: 'タイピング 名人', emoji: '👑' },
-    { at: 15000, name: 'タイピング マスター', emoji: '🛡️' },
+    { at: 4800, name: 'タイピング 2だん', emoji: '🥈' },
+    { at: 6200, name: 'タイピング 3だん', emoji: '🥇' },
+    { at: 7800, name: 'タイピング 4だん', emoji: '🎖️' },
+    { at: 9600, name: 'タイピング 5だん', emoji: '🏵️' },
+    { at: 11600, name: 'タイピング 6だん', emoji: '🔱' },
+    { at: 13800, name: 'タイピング 7だん', emoji: '⚔️' },
+    { at: 16200, name: 'タイピング 8だん', emoji: '🛡️' },
+    { at: 18800, name: 'タイピング 9だん', emoji: '🌠' },
+    { at: 21600, name: 'タイピング 10だん', emoji: '💫' },
+    { at: 25000, name: 'タイピング 名人', emoji: '👑' },
+    { at: 30000, name: 'タイピング 達人', emoji: '🥋' },
+    { at: 36000, name: 'タイピング 王者', emoji: '🏆' },
+    { at: 43000, name: 'タイピング 仙人', emoji: '🧙' },
+    { at: 51000, name: 'タイピング 剣聖', emoji: '🦁' },
+    { at: 60000, name: 'タイピング 伝説', emoji: '🐲' },
+    { at: 70000, name: 'タイピング 英雄', emoji: '🦸' },
+    { at: 82000, name: 'タイピング グランドマスター', emoji: '🌌' },
+    { at: 96000, name: 'タイピング 覇王', emoji: '👹' },
+    { at: 112000, name: 'タイピング 竜王', emoji: '☄️' },
+    { at: 130000, name: 'タイピングの神', emoji: '🔥' },
+    { at: 155000, name: 'タイピング 大魔神', emoji: '💥' },
+    { at: 185000, name: 'タイピング 創造神', emoji: '🌈' },
+    { at: 220000, name: 'タイピング 宇宙王', emoji: '🪐' },
   ];
   function stage() {
     let cur = STAGES[0];
