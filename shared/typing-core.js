@@ -334,7 +334,7 @@
     { id: 'dex25', name: 'かな図鑑 半分', emoji: '📗', test: function () { return dexCount() >= Math.floor(dexTotal / 2); } },
     { id: 'dexall', name: 'かな図鑑コンプ', emoji: '📚', test: function () { return dexCount() >= dexTotal; } },
     { id: 'daily7', name: 'デイリー7かい', emoji: '📅', test: function () { return store.dailyTotal >= 7; } },
-    { id: 'clearall', name: '全レベルクリア', emoji: '🏆', test: function () { return ['home', 'aiueo1', 'aiueo5', 'words', 'special', 'phrase', 'sentence', 'text'].every(isCleared); } },
+    { id: 'clearall', name: '全レベルクリア', emoji: '🏆', test: function () { return ['home', 'aiueo1', 'aiueo5', 'dakuon', 'youon', 'words', 'special', 'phrase', 'sentence', 'text'].every(isCleared); } },
   ];
   function checkMedals() {
     const got = [];
