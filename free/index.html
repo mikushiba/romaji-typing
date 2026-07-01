@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ローマ字タイピング — じゆうにうつ</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>">
-<link rel="stylesheet" href="../shared/typing-ui.css?v=202607011850">
+<link rel="stylesheet" href="../shared/typing-ui.css?v=202607012007">
 <script>
 /* キャッシュ自動アップデート（build.txt が新しければ1回だけ取り直す） */
 (function(){
-  var BUILD='202607011850';
+  var BUILD='202607012007';
   try{
     fetch('../shared/build.txt',{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){
       t=(t||'').trim();
@@ -52,8 +52,8 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../shared/lessons.js?v=202607011850"></script>
-<script src="../shared/typing-core.js?v=202607011850"></script>
+<script src="../shared/lessons.js?v=202607012007"></script>
+<script src="../shared/typing-core.js?v=202607012007"></script>
 <script>
 (function(){
   "use strict";
@@ -61,13 +61,21 @@
 
   /* ---------- お題 ---------- */
   var L = (typeof lessonById==='function' && lessonById('free')) || {};
-  var PROMPTS = (L.prompts && L.prompts.length) ? L.prompts : ['すきな ことば'];
-  var pIdx = Math.floor(Math.random()*PROMPTS.length);
+  var PROMPTS = (L.prompts && L.prompts.length) ? L.prompts.slice() : ['すきな ことば'];
+  // シャッフルして じゅんに出す（ぜんぶ出るまで おなじお題は もどってこない）
+  for(var i=PROMPTS.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=PROMPTS[i]; PROMPTS[i]=PROMPTS[j]; PROMPTS[j]=t; }
+  var pIdx = 0;
   function showPrompt(){ document.getElementById('prompt').textContent = PROMPTS[pIdx]; }
+  function nextPrompt(){
+    pIdx++;
+    if(pIdx >= PROMPTS.length){ // ひとまわりしたら もういちど シャッフル
+      for(var i=PROMPTS.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=PROMPTS[i]; PROMPTS[i]=PROMPTS[j]; PROMPTS[j]=t; }
+      pIdx = 0;
+    }
+    showPrompt();
+  }
   showPrompt();
-  document.getElementById('nextOdai').onclick = function(){
-    pIdx = (pIdx + 1) % PROMPTS.length; showPrompt();
-  };
+  document.getElementById('nextOdai').onclick = nextPrompt;
 
   /* ---------- うちこみ ---------- */
   var raw = '';                          // 打ったローマ字（生）
@@ -128,7 +136,7 @@
     C.save();
     toast('できたね！ ' + n + 'もじ かけたよ ✨');
     raw = ''; render();
-    pIdx = (pIdx + 1) % PROMPTS.length; showPrompt();   // つぎのお題へ
+    nextPrompt();   // つぎのお題へ
   };
 })();
 </script>
